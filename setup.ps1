@@ -6,13 +6,13 @@ if ($path -eq "") {
 }
 
 $dlls = (
-    "Assembly-CSharp.dll",
-    "AstarPathfindingProject.dll",
-    "MoreMountains.Feedbacks.dll",
-    "MPUIKit.dll",
-    "Rewired_Core.dll",
-    "Unity.TextMeshPro.dll",
-    "UnityEngine.UI.dll"
+    "Assembly-CSharp",
+    "AstarPathfindingProject",
+    "MoreMountains.Feedbacks",
+    "MPUIKit",
+    "Rewired_Core",
+    "Unity.TextMeshPro",
+    "UnityEngine.UI"
 )
 
 Write-Host "Setting up lib directory"
@@ -23,7 +23,7 @@ if (Test-Path (Join-Path $path Thronefall.exe) -PathType Leaf) {
     }
 
     $dlls | ForEach-Object {
-        Copy-Item (Join-Path $library_path $_) .\lib\$_
+        Copy-Item (Join-Path $library_path "$_.dll") ".\lib\$_.dll"
     }
 
     $cfg = "InstallPath = $([RegEx]::Escape($(Join-Path $path BepInEx\plugins\$mod_name)))"
@@ -40,6 +40,8 @@ Write-Host "Creating sln"
 dotnet new sln --name $mod_name
 dotnet sln "$mod_name.sln" add $mod_name/$mod_name.csproj
 
+Move-Item -Path .\$mod_name\NuGet.Config -Destination .\NuGet.Config
+
 Write-Host "Adding references"
 $project = Get-Content $mod_name/$mod_name.csproj
 
@@ -49,7 +51,9 @@ $project = Get-Content $mod_name/$mod_name.csproj
         "  <ItemGroup>"
         $dlls | ForEach-Object {
             Write-Host "Reference to lib/$_ added to $mod_name/$mod_name.csproj"
-            "    <Reference Include=`"lib\$_\`" />"
+            "    <Reference Include=`"$_`">"
+            "      <HintPath>..\lib\$_.dll</HintPath>"
+            "    </Reference>"
         }
         Write-Host "Add PostBuild command to $mod_name/$mod_name.csproj"
         "  </ItemGroup>"
@@ -59,3 +63,12 @@ $project = Get-Content $mod_name/$mod_name.csproj
     }
     $_
 } | Set-Content $mod_name/$mod_name.csproj
+
+Write-Host "Updating install.ps1"
+(Get-Content install.ps1) | Foreach-Object {
+    $_
+    if ($_ -eq '$dlls = (') 
+    {
+        "    '$mod_name.dll'"
+    }
+} | Set-Content install.ps1
