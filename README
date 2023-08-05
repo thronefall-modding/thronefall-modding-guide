@@ -1,0 +1,13 @@
+# Modding Setup
+
+- (Optional) Click 'Use this template' to make a new repository with this one as a base.
+- Clone this or the new repository using `git clone <URL>`
+- Run setup.ps1 and input the relevant information in the prompts it asks for.
+- Open the generated sln file with your IDE of choice.
+
+The project is set up to automatically copy the build files and required dlls to Thronefall/BepInEx/Plugins/<NameOfMod>
+See https://docs.bepinex.dev/articles/dev_guide/plugin_tutorial/index.html on how to use BepInEx to modify the game.
+
+## Useful libraries for development:
+
+https://github.com/sinai-dev/UniverseLib - Library to work with the Unity UI through code and interop with other mods.
