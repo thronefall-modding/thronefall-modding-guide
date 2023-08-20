@@ -35,7 +35,7 @@ else {
 
 dotnet new install BepInEx.Templates --nuget-source https://nuget.bepinex.dev/v3/index.json
 Write-Host "Creating csproj"
-dotnet new bepinex5plugin -n $mod_name -T net472 -U 2022.3.0
+dotnet new bepinex5plugin -n $mod_name -T netstandard2.0 -U 2022.3.0
 Write-Host "Creating sln"
 dotnet new sln --name $mod_name
 dotnet sln "$mod_name.sln" add $mod_name/$mod_name.csproj
